@@ -2,16 +2,14 @@ import React, { Component } from 'react';
 import StackGrid from "react-stack-grid";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { zipWith } from 'lodash';
 
 import { bootstrap } from '../actions/bootstrap';
+import CatGridCard from '../components/CatGridCard';
 
 class CatGrid extends Component {
   componentDidMount() {
     this.props.actions.bootstrap();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
   }
 
   render() {
@@ -22,6 +20,13 @@ class CatGrid extends Component {
         gutterHeight={10}
         monitorImagesLoaded={true}
       >
+        {this.props.cats.map(({ key, image, fact }) => (
+          <CatGridCard
+            key={key}
+            image={image}
+            fact={fact}
+          />
+        ))}
       </StackGrid>
     )
   }
@@ -41,9 +46,16 @@ function mapStateToProps(state) {
     },
   } = state;
 
+  const cats = !bootstrapped ? [] : zipWith(images, facts, (image, fact) => {
+    return {
+      key: `cat_${image.id[0]}`,
+      image: image.url[0],
+      fact: fact.fact,
+    }
+  });
+
   return {
-    images,
-    facts,
+    cats,
     bootstraping,
     bootstrapped,
   };
