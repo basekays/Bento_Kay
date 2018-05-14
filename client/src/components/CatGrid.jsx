@@ -11,9 +11,6 @@ const styles = {
 }
 
 export default class CatGrid extends Component {
-  componentDidMount() {
-    this.props.actions.fetchCats();
-  }
 
   render() {
     return (

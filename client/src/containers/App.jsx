@@ -11,20 +11,40 @@ import { sortBy } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import FlatButton from 'material-ui/FlatButton';
+import CircularProgress from 'material-ui/CircularProgress';
+import Snackbar from 'material-ui/Snackbar';
 
 import CatGrid from '../components/CatGrid';
 import { fetchCats } from '../actions/fetchCats';
 import { favoriteCat } from '../actions/favoriteCat';
 import { toggleFavoritesOnly } from '../actions/toggleFavoritesOnly';
 import { sortCats } from '../actions/sortCats';
+import { clearCatCache } from '../actions/clearCatCache';
+
+const styles = {
+  circularProgress: {
+    marginLeft: '20px',
+  },
+}
 
 class App extends Component {
   constructor(props) {
     super(props);
+
+    this.onShowOutOfFavoritesSnackBarClose =
+      this.onShowOutOfFavoritesSnackBarClose.bind(this);
     this.renderToggleFavoritesOnlyButton =
       this.renderToggleFavoritesOnlyButton.bind(this);
     this.renderSortButton = this.renderSortButton.bind(this);
-    this.renderClearCacheButton = this.renderClearCacheButton.bind(this);
+    this.renderClearCatCacheButton = this.renderClearCatCacheButton.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.actions.fetchCats();
+  }
+
+  onShowOutOfFavoritesSnackBarClose() {
+    window.requestAnimationFrame(this.props.actions.toggleFavoritesOnly);
   }
 
   renderToggleFavoritesOnlyButton() {
@@ -33,13 +53,19 @@ class App extends Component {
         toggleFavoritesOnly,
       },
       favoritesOnly,
+      hasFavorites,
     } = this.props;
-    return (
-      <FlatButton
-        label={favoritesOnly ? "Show All" : "Show Favorites Only"}
-        onClick={toggleFavoritesOnly}
-      />
-    );
+
+    if (hasFavorites) {
+      return (
+        <FlatButton
+          label={favoritesOnly ? "Show All" : "Show Favorites Only"}
+          onClick={toggleFavoritesOnly}
+        />
+      );
+    }
+
+    return null;
   }
 
   renderSortButton() {
@@ -57,10 +83,10 @@ class App extends Component {
     );
   }
 
-  renderClearCacheButton() {
+  renderClearCatCacheButton() {
     const {
       actions: {
-        clearCache,
+        clearCatCache,
       },
       cached,
     } = this.props;
@@ -69,7 +95,7 @@ class App extends Component {
       return (
         <FlatButton
           label="Clear Cache"
-          onClick={clearCache}
+          onClick={clearCatCache}
         />
       );
     }
@@ -78,6 +104,8 @@ class App extends Component {
   }
 
   render() {
+    const { favoritesOnly, hasFavorites } = this.props;
+
     return (
       <MuiThemeProvider>
         <div id="root">
@@ -86,15 +114,26 @@ class App extends Component {
             showMenuIconButton={false}
           />
           <Toolbar>
-            <ToolbarGroup firstChild />
+            <ToolbarGroup firstChild>
+              {this.props.fetching && (
+                <CircularProgress size={20} style={styles.circularProgress} />
+              )}
+            </ToolbarGroup>
             <ToolbarGroup>
               {this.renderToggleFavoritesOnlyButton()}
               {this.renderSortButton()}
+              {this.renderClearCatCacheButton()}
             </ToolbarGroup>
           </Toolbar>
           <CatGrid
             actions={this.props.actions}
             index={this.props.index}
+          />
+          <Snackbar
+            open={favoritesOnly && !hasFavorites}
+            message="You Have No More Favorites"
+            autoHideDuration={1000}
+            onRequestClose={this.onShowOutOfFavoritesSnackBarClose}
           />
         </div>
       </MuiThemeProvider>
@@ -110,12 +149,16 @@ function mapStateToProps(state) {
       index,
       favoritesOnly,
       sorted,
+      cached,
     },
   } = state;
 
   let currentIndex = index;
+
+  const currentFavorites = currentIndex.filter((cat) => !!cat.favorite);
+
   if (favoritesOnly) {
-    currentIndex = currentIndex.filter((cat) => !!cat.favorite);
+    currentIndex = currentFavorites;
   }
 
   if (sorted) {
@@ -125,9 +168,11 @@ function mapStateToProps(state) {
   return {
     index: currentIndex,
     favoritesOnly,
+    hasFavorites: currentFavorites.length >= 1,
     fetching,
     fetched,
     sorted,
+    cached,
   };
 }
 
@@ -138,6 +183,7 @@ function mapDispatchToProps(dispatch) {
       favoriteCat,
       toggleFavoritesOnly,
       sortCats,
+      clearCatCache,
     }, dispatch),
   };
 }

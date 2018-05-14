@@ -16,7 +16,7 @@ export function fetchCats() {
 
     const catCache = localStorage.getItem('cats');
     const index = catCache ? JSON.parse(catCache) : [];
-    if (index.length >= CAT_LIMIT) {
+    if (index.length >= 1) {
       dispatch(fetchCatsSuccess({ index }))
     } else {
       Promise.all([
@@ -36,7 +36,7 @@ export function fetchCats() {
           }
         });
         localStorage.setItem('cats', JSON.stringify(cats));
-        dispatch(fetchCatsSuccess({ index }));
+        dispatch(fetchCatsSuccess({ index: cats }));
       })
       .catch((error) => {
         dispatch(fetchCatsFailure({ errors: [error] }));
