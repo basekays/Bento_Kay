@@ -25,6 +25,8 @@ export default class CatGrid extends Component {
           <CatGridCard
             key={key}
             catKey={key}
+            focused={this.props.focusedCatKey == key}
+            focusedCatKey={this.props.focusedCatKey}
             image={image}
             fact={fact}
             favorite={favorite}

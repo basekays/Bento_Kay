@@ -20,6 +20,7 @@ import { favoriteCat } from '../actions/favoriteCat';
 import { toggleFavoritesOnly } from '../actions/toggleFavoritesOnly';
 import { sortCats } from '../actions/sortCats';
 import { clearCatCache } from '../actions/clearCatCache';
+import { focusOnCat } from '../actions/focusOnCat';
 
 const styles = {
   circularProgress: {
@@ -110,7 +111,7 @@ class App extends Component {
       <MuiThemeProvider>
         <div id="root">
           <AppBar
-            title="Favorite Cats"
+            title="Cat Facts"
             showMenuIconButton={false}
           />
           <Toolbar>
@@ -128,6 +129,7 @@ class App extends Component {
           <CatGrid
             actions={this.props.actions}
             index={this.props.index}
+            focusedCatKey={this.props.focusedCatKey}
           />
           <Snackbar
             open={favoritesOnly && !hasFavorites}
@@ -150,6 +152,7 @@ function mapStateToProps(state) {
       favoritesOnly,
       sorted,
       cached,
+      focusedCatKey,
     },
   } = state;
 
@@ -173,6 +176,7 @@ function mapStateToProps(state) {
     fetched,
     sorted,
     cached,
+    focusedCatKey,
   };
 }
 
@@ -184,6 +188,7 @@ function mapDispatchToProps(dispatch) {
       toggleFavoritesOnly,
       sortCats,
       clearCatCache,
+      focusOnCat,
     }, dispatch),
   };
 }
