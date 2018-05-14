@@ -23,6 +23,14 @@ import { clearCatCache } from '../actions/clearCatCache';
 import { focusOnCat } from '../actions/focusOnCat';
 
 const styles = {
+  navBarContainer: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    height: '150px',
+  },
   circularProgress: {
     marginLeft: '20px',
   },
@@ -110,22 +118,24 @@ class App extends Component {
     return (
       <MuiThemeProvider>
         <div id="root">
-          <AppBar
-            title="Cat Facts"
-            showMenuIconButton={false}
-          />
-          <Toolbar>
-            <ToolbarGroup firstChild>
-              {this.props.fetching && (
-                <CircularProgress size={20} style={styles.circularProgress} />
-              )}
-            </ToolbarGroup>
-            <ToolbarGroup>
-              {this.renderToggleFavoritesOnlyButton()}
-              {this.renderSortButton()}
-              {this.renderClearCatCacheButton()}
-            </ToolbarGroup>
-          </Toolbar>
+          <div id="nav" style={styles.navBarContainer}>
+            <AppBar
+              title="Cat Facts"
+              showMenuIconButton={false}
+            />
+            <Toolbar>
+              <ToolbarGroup firstChild>
+                {this.props.fetching && (
+                  <CircularProgress size={20} style={styles.circularProgress} />
+                )}
+              </ToolbarGroup>
+              <ToolbarGroup>
+                {this.renderToggleFavoritesOnlyButton()}
+                {this.renderSortButton()}
+                {this.renderClearCatCacheButton()}
+              </ToolbarGroup>
+            </Toolbar>
+          </div>
           <CatGrid
             actions={this.props.actions}
             index={this.props.index}

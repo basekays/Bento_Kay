@@ -6,7 +6,7 @@ import CatGridCard from './CatGridCard';
 const styles = {
   stackGrid: {
     width: '80%',
-    margin: '50px auto',
+    margin: '150px auto 50px',
   },
 }
 
