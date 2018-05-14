@@ -2,29 +2,40 @@ import React, { Component } from 'react';
 import StackGrid from "react-stack-grid";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { zipWith } from 'lodash';
 
-import { bootstrap } from '../actions/bootstrap';
+import { fetchCats } from '../actions/fetchCats';
+import { favoriteCat } from '../actions/favoriteCat';
 import CatGridCard from '../components/CatGridCard';
+
+const styles = {
+  stackGrid: {
+    width: '80%',
+    margin: '50px auto',
+  },
+}
 
 class CatGrid extends Component {
   componentDidMount() {
-    this.props.actions.bootstrap();
+    this.props.actions.fetchCats();
   }
 
   render() {
     return (
       <StackGrid
-        columnWidth={"25%"}
+        columnWidth='33.33%'
+        style={styles.stackGrid}
         gutterWidth={10}
         gutterHeight={10}
         monitorImagesLoaded={true}
       >
-        {this.props.cats.map(({ key, image, fact }) => (
+        {this.props.index.map(({ key, image, fact, favorite }) => (
           <CatGridCard
             key={key}
+            catKey={key}
             image={image}
             fact={fact}
+            favorite={favorite}
+            actions={this.props.actions}
           />
         ))}
       </StackGrid>
@@ -34,37 +45,25 @@ class CatGrid extends Component {
 
 function mapStateToProps(state) {
   const {
-    catImages: {
-      images,
-    },
-    catFacts: {
-      facts,
-    },
-    bootstrap: {
-      bootstraping,
-      bootstrapped,
+    cats: {
+      fetching,
+      fetched,
+      index,
     },
   } = state;
 
-  const cats = !bootstrapped ? [] : zipWith(images, facts, (image, fact) => {
-    return {
-      key: `cat_${image.id[0]}`,
-      image: image.url[0],
-      fact: fact.fact,
-    }
-  });
-
   return {
-    cats,
-    bootstraping,
-    bootstrapped,
+    index,
+    fetching,
+    fetched,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     actions: bindActionCreators({
-      bootstrap,
+      fetchCats,
+      favoriteCat,
     }, dispatch),
   };
 }

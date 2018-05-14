@@ -1,8 +1,10 @@
+import { CAT_LIMIT } from '../lib/constants';
+
 export const FETCH_CAT_FACTS = 'BENTO_KAY/FETCH_CAT_FACTS';
 export const FETCH_CAT_FACTS_FAILURE = 'BENTO_KAY/FETCH_CAT_FACTS_FAILURE';
 export const FETCH_CAT_FACTS_SUCCESS = 'BENTO_KAY/FETCH_CAT_FACTS_SUCCESS';
 
-const url = 'https://cors-proxy.htmldriven.com/?url=https://catfact.ninja/facts?limit=25';
+const url = `https://cors-proxy.htmldriven.com/?url=https://catfact.ninja/facts?limit=${CAT_LIMIT}`;
 
 export function fetchCatFacts() {
   return (dispatch) => {
@@ -14,10 +16,10 @@ export function fetchCatFacts() {
       .then((response) => response.json())
       .then((json) => {
         const { data } = JSON.parse(json.body);
-        dispatch(fetchCatFactsSuccess({ facts: data }))
+        return dispatch(fetchCatFactsSuccess({ facts: data }))
       })
       .catch((error) => {
-        dispatch(fetchCatFactsFailure({
+        return dispatch(fetchCatFactsFailure({
           errors: [error]
         }));
       })

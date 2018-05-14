@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux';
 
-import bootstrapReducer from './bootstrap';
+import catsReducer from './catsReducer';
 import fetchCatFactsReducer from './fetchCatFacts';
 import fetchCatImagesReducer from './fetchCatImages';
 
+
 export default combineReducers({
-  bootstrap: bootstrapReducer,
+  cats: catsReducer,
   catFacts: fetchCatFactsReducer,
   catImages: fetchCatImagesReducer,
 });

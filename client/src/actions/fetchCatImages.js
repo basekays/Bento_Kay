@@ -1,12 +1,12 @@
-import {
-  parseString
-} from 'xml2js';
+import xml2js from 'xml2js-es6-promise';
+
+import { CAT_LIMIT } from '../lib/constants';
 
 export const FETCH_CAT_IMAGES = 'BENTO_KAY/FETCH_CAT_IMAGES';
 export const FETCH_CAT_IMAGES_FAILURE = 'BENTO_KAY/FETCH_CAT_IMAGES_FAILURE';
 export const FETCH_CAT_IMAGES_SUCCESS = 'BENTO_KAY/FETCH_CAT_IMAGES_SUCCESS';
 
-const url = 'http://thecatapi.com/api/images/get?format=xml&results_per_page=25';
+const url = `http://thecatapi.com/api/images/get?format=xml&results_per_page=${CAT_LIMIT}`;
 
 export function fetchCatImages() {
   return (dispatch) => {
@@ -16,24 +16,20 @@ export function fetchCatImages() {
 
     return fetch(url)
       .then((response) => response.text())
-      .then((text) => {
-        parseString(text, (error, json) => {
-          if (error) {
-            throw error;
+      .then((xml) => xml2js(xml))
+      .then((json) => {
+        const {
+          response: {
+            data
           }
-          const {
-            response: {
-              data
-            }
-          } = json;
-          const images = data[0].images[0].image;
-          dispatch(fetchCatImagesSuccess({
-            images
-          }));
-        })
+        } = json;
+        const images = data[0].images[0].image;
+        return dispatch(fetchCatImagesSuccess({
+          images
+        }));
       })
       .catch((error) => {
-        dispatch(fetchCatImagesFailure({
+        return dispatch(fetchCatImagesFailure({
           errors: [error]
         }));
       })

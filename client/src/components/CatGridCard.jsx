@@ -1,6 +1,7 @@
 import React, {
   Component
 } from 'react';
+import RaisedButton from 'material-ui/RaisedButton';
 import {
   Card,
   CardActions,
@@ -10,10 +11,22 @@ import {
   CardText
 } from 'material-ui/Card';
 
-export default class CatGridCard extends Component {
-  render() {
-    const { image, fact } = this.props;
 
+class CatGridCard extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.onFavoriteButtonPress = this.onFavoriteButtonPress.bind(this);
+  }
+
+  onFavoriteButtonPress() {
+    const { actions: { favoriteCat }, catKey } = this.props;
+    favoriteCat(catKey);
+  }
+
+  render() {
+    const { favorite, image, fact } = this.props;
     return (
       <div>
         <Card>
@@ -25,8 +38,18 @@ export default class CatGridCard extends Component {
           <CardText>
             {fact}
           </CardText>
+          <RaisedButton
+            onClick={this.onFavoriteButtonPress}
+            primary={!favorite}
+            secondary={favorite}
+            fullWidth
+          >
+            {favorite ? "Unfavor" : "Favor"}
+          </RaisedButton>
         </Card>
       </div>
     )
   }
 }
+
+export default CatGridCard;
