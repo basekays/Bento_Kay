@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import StackGrid from "react-stack-grid";
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
-import { fetchCats } from '../actions/fetchCats';
-import { favoriteCat } from '../actions/favoriteCat';
-import CatGridCard from '../components/CatGridCard';
+import CatGridCard from './CatGridCard';
 
 const styles = {
   stackGrid: {
@@ -14,7 +10,7 @@ const styles = {
   },
 }
 
-class CatGrid extends Component {
+export default class CatGrid extends Component {
   componentDidMount() {
     this.props.actions.fetchCats();
   }
@@ -42,33 +38,3 @@ class CatGrid extends Component {
     )
   }
 }
-
-function mapStateToProps(state) {
-  const {
-    cats: {
-      fetching,
-      fetched,
-      index,
-    },
-  } = state;
-
-  return {
-    index,
-    fetching,
-    fetched,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators({
-      fetchCats,
-      favoriteCat,
-    }, dispatch),
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(CatGrid);

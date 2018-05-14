@@ -42,10 +42,9 @@ class CatGridCard extends Component {
             onClick={this.onFavoriteButtonPress}
             primary={!favorite}
             secondary={favorite}
+            label={favorite ? "Unfavor" : "Favor"}
             fullWidth
-          >
-            {favorite ? "Unfavor" : "Favor"}
-          </RaisedButton>
+          />
         </Card>
       </div>
     )
